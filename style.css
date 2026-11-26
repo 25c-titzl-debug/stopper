@@ -1,0 +1,220 @@
+:root {
+    --hatter: #0f172a;
+    --kartya-szin: #1e293b;
+    --szoveg: #f8fafc;
+    --halvany: #94a3b8;
+    --accent: #38bdf8;
+    --zold: #22c55e;
+    --piros: #ef4444;
+    --lila: #8b5cf6;
+    --szurke: #475569;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--hatter);
+    color: var(--szoveg);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+.kartya {
+    background-color: var(--kartya-szin);
+    width: 100%;
+    max-width: 460px;
+    padding: 30px 25px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    text-align: center;
+}
+
+h1 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    color: var(--halvany);
+    font-weight: 600;
+}
+
+
+.mod-valaszto {
+    display: flex;
+    background-color: var(--hatter);
+    padding: 5px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+.mod-valaszto button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    color: var(--halvany);
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.mod-valaszto button.aktiv {
+    background-color: var(--accent);
+    color: var(--hatter);
+}
+
+
+.kijelzo {
+    font-size: 3.5rem;
+    font-weight: bold;
+    font-variant-numeric: tabular-nums;
+    margin: 20px 0;
+    letter-spacing: 2px;
+}
+
+
+.beallitas-doboz {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.mezo {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.mezo label {
+    font-size: 0.8rem;
+    color: var(--halvany);
+    margin-bottom: 4px;
+}
+
+.mezo input {
+    width: 75px;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--szurke);
+    background-color: var(--hatter);
+    color: var(--szoveg);
+    font-size: 1rem;
+    text-align: center;
+}
+
+.btn-beallit {
+    padding: 9px 15px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--accent);
+    color: var(--hatter);
+    font-weight: bold;
+    cursor: pointer;
+}
+
+
+.gombok {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.btn {
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.2s, background-color 0.2s;
+}
+
+.btn:active:not(:disabled) {
+    transform: scale(0.96);
+}
+
+.btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.start { background-color: var(--zold); }
+.stop { background-color: var(--piros); }
+.kor { background-color: var(--lila); }
+.reset { background-color: var(--szurke); }
+
+
+.korok-doboz {
+    margin-top: 20px;
+    text-align: left;
+    background-color: var(--hatter);
+    padding: 15px;
+    border-radius: 12px;
+}
+
+.korok-doboz h3 {
+    font-size: 0.85rem;
+    color: var(--halvany);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#korok-lista {
+    list-style: none;
+    max-height: 140px;
+    overflow-y: auto;
+}
+
+#korok-lista li {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 4px;
+    border-bottom: 1px solid var(--kartya-szin);
+    font-size: 0.95rem;
+    font-variant-numeric: tabular-nums;
+}
+
+#korok-lista li:last-child {
+    border-bottom: none;
+}
+
+
+.ertesites {
+    margin-top: 20px;
+    padding: 12px;
+    background-color: rgba(239, 68, 68, 0.2);
+    border: 1px solid var(--piros);
+    color: #fca5a5;
+    border-radius: 10px;
+    font-weight: bold;
+    animation: villogas 1s infinite;
+}
+
+.rejtett {
+    display: none;
+}
+
+@keyframes villogas {
+    50% { opacity: 0.5; }
+}
+
+
+@media (max-width: 400px) {
+    .kijelzo {
+        font-size: 2.6rem;
+    }
+    .gombok {
+        grid-template-columns: 1fr;
+    }
+}

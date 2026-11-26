@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopper és Visszaszámláló</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <main class="kartya">
+        <h1>Stopper & Visszaszámláló</h1>
+        
+        
+        <div class="mod-valaszto">
+            <button id="tab-stopper" class="aktiv" onclick="modValtas('stopper')">Stopper</button>
+            <button id="tab-vissza" onclick="modValtas('visszaszamlalo')">Visszaszámláló</button>
+        </div>
+
+        
+        <div id="kijelzo" class="kijelzo">00:00:00</div>
+
+        
+        <div id="beallitas-doboz" class="beallitas-doboz rejtett">
+            <div class="mezo">
+                <label for="perc-input">Perc</label>
+                <input type="number" id="perc-input" min="0" max="99" value="0">
+            </div>
+            <div class="mezo">
+                <label for="mp-input">Másodperc</label>
+                <input type="number" id="mp-input" min="0" max="59" value="10">
+            </div>
+            <button class="btn-beallit" onclick="idoBeallitasa()">Beállít</button>
+        </div>
+
+        
+        <div class="gombok">
+            <button id="btn-start" class="btn start" onclick="inditas()">Indítás</button>
+            <button id="btn-stop" class="btn stop" onclick="megallitas()" disabled>Megállítás</button>
+            <button id="btn-kor" class="btn kor" onclick="koridoRogzites()" disabled>Részidő</button>
+            <button id="btn-reset" class="btn reset" onclick="nullazas()">Nullázás</button>
+        </div>
+
+        
+        <div id="korok-doboz" class="korok-doboz rejtett">
+            <h3>Rögzített részidők</h3>
+            <ul id="korok-lista"></ul>
+        </div>
+
+        
+        <div id="ertesites" class="ertesites rejtett">
+            ⏰ Lejárt az idő!
+        </div>
+    </main>
+
+    <script>
+    let aktualisMod = 'stopper';
+    let masodpercek = 0;
+    let idozito = null;
+    let korSzamlalo = 0;
+
+    
+    const kijelzo = document.getElementById('kijelzo');
+    const btnStart = document.getElementById('btn-start');
+    const btnStop = document.getElementById('btn-stop');
+    const btnKor = document.getElementById('btn-kor');
+    const beallitasDoboz = document.getElementById('beallitas-doboz');
+    const korokDoboz = document.getElementById('korok-doboz');
+    const korokLista = document.getElementById('korok-lista');
+    const ertesites = document.getElementById('ertesites');
+
+    
+    function idoSzovegge(mpOsszesen) {
+        const ora = Math.floor(mpOsszesen / 3600);
+        const perc = Math.floor((mpOsszesen % 3600) / 60);
+        const mp = mpOsszesen % 60;
+
+        return `${String(ora).padStart(2, '0')}:${String(perc).padStart(2, '0')}:${String(mp).padStart(2, '0')}`;
+    }
+
+    function kijelzoFrissites() {
+        kijelzo.textContent = idoSzovegge(masodpercek);
+    }
+
+    // Módváltás
+    function modValtas(ujMod) {
+        nullazas();
+        aktualisMod = ujMod;
+
+        document.getElementById('tab-stopper').classList.toggle('aktiv', ujMod === 'stopper');
+        document.getElementById('tab-vissza').classList.toggle('aktiv', ujMod === 'visszaszamlalo');
+
+        if (ujMod === 'visszaszamlalo') {
+            beallitasDoboz.classList.remove('rejtett');
+            btnKor.classList.add('rejtett'); 
+            idoBeallitasa();
+        } else {
+            beallitasDoboz.classList.add('rejtett');
+            btnKor.classList.remove('rejtett');
+        }
+    }
+
+    
+    function idoBeallitasa() {
+        megallitas();
+        ertesites.classList.add('rejtett');
+        
+        const perc = parseInt(document.getElementById('perc-input').value) || 0;
+        const mp = parseInt(document.getElementById('mp-input').value) || 0;
+        
+        masodpercek = (perc * 60) + mp;
+        kijelzoFrissites();
+    }
+
+    
+    function inditas() {
+        if (idozito !== null) return;
+        if (aktualisMod === 'visszaszamlalo' && masodpercek <= 0) return;
+
+        ertesites.classList.add('rejtett');
+        btnStart.disabled = true;
+        btnStop.disabled = false;
+        
+        
+        if (aktualisMod === 'stopper') {
+            btnKor.disabled = false;
+        }
+
+        idozito = setInterval(() => {
+            if (aktualisMod === 'stopper') {
+                masodpercek++;
+                kijelzoFrissites();
+            } else {
+                masodpercek--;
+                kijelzoFrissites();
+
+                if (masodpercek <= 0) {
+                    megallitas();
+                    figyelmeztetes();
+                }
+            }
+        }, 1000);
+    }
+
+    
+    function megallitas() {
+        clearInterval(idozito);
+        idozito = null;
+        btnStart.disabled = false;
+        btnStop.disabled = true;
+        btnKor.disabled = true;
+    }
+
+    
+    function koridoRogzites() {
+        if (idozito === null || aktualisMod !== 'stopper') return;
+
+        korSzamlalo++;
+        korokDoboz.classList.remove('rejtett');
+
+        const ujElem = document.createElement('li');
+        ujElem.innerHTML = `<span>${korSzamlalo}. kör</span> <strong>${idoSzovegge(masodpercek)}</strong>`;
+        
+        
+        korokLista.prepend(ujElem);
+    }
+
+    
+    function nullazas() {
+        megallitas();
+        ertesites.classList.add('rejtett');
+        masodpercek = 0;
+        korSzamlalo = 0;
+        korokLista.innerHTML = '';
+        korokDoboz.classList.add('rejtett');
+        kijelzoFrissites();
+    }
+
+    
+    function figyelmeztetes() {
+        ertesites.classList.remove('rejtett');
+        
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
+        oscillator.connect(audioCtx.destination);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.6);
+    }
+    </script>
+</body>
+</html>
